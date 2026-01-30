@@ -62,3 +62,105 @@
 
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cell Structure Quiz | Doctorians</title>
+    <style>
+        :root { --primary: #2e7d32; --secondary: #f1f8e9; --error: #d32f2f; --text: #333; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fafafa; color: var(--text); display: flex; justify-content: center; padding: 20px; }
+        .quiz-card { background: white; max-width: 600px; width: 100%; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-top: 8px solid var(--primary); }
+        h1 { color: var(--primary); font-size: 24px; margin-bottom: 10px; }
+        .progress-bar { height: 8px; background: #eee; border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
+        #progress { height: 100%; background: var(--primary); width: 0%; transition: 0.3s; }
+        .question { font-size: 18px; font-weight: 600; margin-bottom: 20px; }
+        .options { display: grid; gap: 10px; }
+        button.opt { padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; background: white; cursor: pointer; text-align: left; transition: 0.2s; font-size: 16px; }
+        button.opt:hover { background: var(--secondary); border-color: var(--primary); }
+        .correct { background: #c8e6c9 !important; border-color: #4caf50 !important; }
+        .wrong { background: #ffcdd2 !important; border-color: var(--error) !important; }
+        #next-btn { margin-top: 20px; width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; display: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-card">
+    <h1>Cell Structure & Function</h1>
+    <div class="progress-bar"><div id="progress"></div></div>
+    
+    <div id="quiz-content">
+        <div class="question" id="q-text">Question loading...</div>
+        <div class="options" id="options-bin"></div>
+        <button id="next-btn" onclick="nextQuestion()">Next Question</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        { q: "Which organelle contains digestive enzymes to break down waste?", a: ["Golgi Apparatus", "Lysosome", "Ribosome", "Vacuole"], c: 1 },
+        { q: "What is the main component of the plant cell wall?", a: ["Glycogen", "Chitin", "Cellulose", "Peptidoglycan"], c: 2 },
+        { q: "Which structure is responsible for protein synthesis?", a: ["Mitochondria", "Nucleolus", "Smooth ER", "Ribosome"], c: 3 },
+        { q: "The 'Fluid Mosaic Model' describes which part of the cell?", a: ["Cytoplasm", "Plasma Membrane", "Nuclear Envelope", "Cytoskeleton"], c: 1 },
+        { q: "Which organelle modifies, sorts, and packages proteins?", a: ["Golgi Apparatus", "Rough ER", "Centriole", "Chloroplast"], c: 0 }
+    ];
+
+    let currentIdx = 0;
+    let score = 0;
+
+    function displayQuestion() {
+        const q = questions[currentIdx];
+        document.getElementById("q-text").innerText = q.q;
+        const bin = document.getElementById("options-bin");
+        bin.innerHTML = "";
+        document.getElementById("next-btn").style.display = "none";
+        document.getElementById("progress").style.width = `${(currentIdx / questions.length) * 100}%`;
+
+        q.a.forEach((opt, i) => {
+            const btn = document.createElement("button");
+            btn.className = "opt";
+            btn.innerText = opt;
+            btn.onclick = () => checkAns(btn, i);
+            bin.appendChild(btn);
+        });
+    }
+
+    function checkAns(btn, choice) {
+        const correct = questions[currentIdx].c;
+        const allBtns = document.querySelectorAll(".opt");
+        allBtns.forEach(b => b.disabled = true);
+
+        if(choice === correct) {
+            btn.classList.add("correct");
+            score++;
+        } else {
+            btn.classList.add("wrong");
+            allBtns[correct].classList.add("correct");
+        }
+        document.getElementById("next-btn").style.display = "block";
+    }
+
+    function nextQuestion() {
+        currentIdx++;
+        if(currentIdx < questions.length) {
+            displayQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById("progress").style.width = "100%";
+        document.getElementById("quiz-content").innerHTML = `
+            <h2>Quiz Complete!</h2>
+            <p>You scored <strong>${score}</strong> out of ${questions.length}</p>
+            <button id="next-btn" style="display:block" onclick="location.reload()">Restart Quiz</button>
+        `;
+    }
+
+    displayQuestion();
+</script>
+</body>
+  </html>
+
